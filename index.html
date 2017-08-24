@@ -1,0 +1,62 @@
+<html>
+<head>
+  <title>Tolteck Vouchers</title>
+  <meta name="robots" content="noindex">
+</head>
+
+<body>
+  <form onsubmit="return false;">
+    <input type="text" id="input" placeholder="OFFRE...">
+    <button onclick="go()">Générer</button>
+  </form>
+  <p id="result"></p>
+
+  <script type="text/javascript">
+    var input = document.getElementById('input');
+    var result = document.getElementById('result');
+
+    function hashCode(s) {
+      return s.split('').reduce(function (a, b) {
+        a = (a << 5) - a + b.charCodeAt(0);
+        return a & a;
+      }, 0);
+    }
+
+    function latinize(str) {
+      str = str.replace(/[.,\/#!$%\^&\*;:{}=\-_"'`’~()]/g, ' ')
+               .replace('Æ', 'Ae').replace('æ', 'ae')
+               .replace('Œ', 'Oe').replace('œ', 'oe');
+      if (typeof str.normalize === 'function') {
+        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      }
+      return str;
+    }
+
+    function generate_voucher(prefix) {
+      prefix = latinize(prefix).replace(/\s+/g, '').toUpperCase();
+      if (prefix.length < 6) {
+        prefix += Math.random().toString(36).toUpperCase()
+                  .substr(2, 6 - prefix.length);
+      }
+
+      var suffix = '';
+      var i = Math.floor(Math.random() * 36); // start with two letters
+      while (hashCode(prefix + suffix) % 100 !== 1) {
+        if (hashCode(prefix + suffix) < 0) {
+          // Add one letter avoid almost-infinite loop if hash < 0:
+          i = 36 * i + Math.floor(Math.random() * 36);
+        } else {
+          i++;
+        }
+        suffix = i.toString(36).toUpperCase();
+      }
+
+      return prefix + suffix;
+    }
+
+    function go() {
+      result.textContent = generate_voucher(input.value);
+    }
+  </script>
+</body>
+</html>
