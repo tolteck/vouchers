@@ -36,9 +36,9 @@
       result.textContent = '';
 
       let prefix = latinize(input.value).replace(/\s+/g, '').toUpperCase();
-      if (prefix.length < 6) {
+      if (prefix.length < 5) {
         prefix += Math.random().toString(36).toUpperCase()
-                  .substr(2, 6 - prefix.length);
+                  .substr(2, 5 - prefix.length);
       }
 
       for (let n = 0; n < 10; n++) {
