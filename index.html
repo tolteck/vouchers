@@ -7,7 +7,7 @@
 <body>
   <form onsubmit="return false;">
     <input type="text" id="input" placeholder="OFFRE...">
-    <button onclick="go()">Générer</button>
+    <button onclick="generate_vouchers()">Générer</button>
   </form>
   <pre id="result"></pre>
 
@@ -32,30 +32,30 @@
       return str;
     }
 
-    function generate_voucher(prefix) {
-      prefix = latinize(prefix).replace(/\s+/g, '').toUpperCase();
+    function generate_vouchers() {
+      result.textContent = '';
+
+      let prefix = latinize(input.value).replace(/\s+/g, '').toUpperCase();
       if (prefix.length < 6) {
         prefix += Math.random().toString(36).toUpperCase()
                   .substr(2, 6 - prefix.length);
       }
 
-      let suffix = '';
-      let i = Math.floor(Math.random() * 36); // start with two letters
-      while (hashCode(prefix + suffix) % 100 !== 1) {
-        if (hashCode(prefix + suffix) < 0) {
-          // Add one letter avoid almost-infinite loop if hash < 0:
-          i = 36 * i + Math.floor(Math.random() * 36);
-        } else {
-          i++;
+      for (let n = 0; n < 10; n++) {
+        let suffix = '';
+        let i = Math.floor(Math.random() * 36); // start with two letters
+        while (hashCode(prefix + suffix) % 100 !== 1) {
+          if (hashCode(prefix + suffix) < 0) {
+            // Add one letter avoid almost-infinite loop if hash < 0:
+            i = 36 * i + Math.floor(Math.random() * 36);
+          } else {
+            i++;
+          }
+          suffix = i.toString(36).toUpperCase();
         }
-        suffix = i.toString(36).toUpperCase();
+
+        result.textContent += prefix + suffix + '\n';
       }
-
-      return prefix + suffix;
-    }
-
-    function go() {
-      result.textContent = generate_voucher(input.value);
     }
   </script>
 </body>
